@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Sudoku</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="bg" aria-hidden="true"></div>
+
+    <main class="app">
+      <header class="top">
+        <div class="brand">
+          <div>
+            <h1>Sudoku</h1>
+          </div>
+        </div>
+
+        <div class="topRight">
+          <div class="pill" role="group" aria-label="Difficulty">
+            <label class="pillItem">
+              <input type="radio" name="difficulty" value="easy" checked />
+              <span>Easy</span>
+            </label>
+            <label class="pillItem">
+              <input type="radio" name="difficulty" value="medium" />
+              <span>Medium</span>
+            </label>
+            <label class="pillItem">
+              <input type="radio" name="difficulty" value="hard" />
+              <span>Hard</span>
+            </label>
+          </div>
+
+          <button class="btn btnPrimary" id="newGameBtn" type="button">New game</button>
+        </div>
+      </header>
+
+      <section class="content">
+        <section class="boardCard" aria-label="Sudoku board">
+          <div class="boardHeader">
+            <div class="stat">
+              <div class="statLabel">Time</div>
+              <div class="statValue" id="timeLabel">00:00</div>
+            </div>
+            <div class="stat">
+              <div class="statLabel">Mistakes</div>
+              <div class="statValue"><span id="mistakesLabel">0</span><span class="muted"> / 3</span></div>
+            </div>
+            <div class="stat">
+              <div class="statLabel">Progress</div>
+              <div class="statValue" id="progressLabel">0%</div>
+            </div>
+
+            <div class="boardActions" role="group" aria-label="Board actions">
+              <button class="btn" id="checkBtn" type="button">Check</button>
+              <button class="btn" id="hintBtn" type="button">Hint</button>
+              <button class="btn" id="clearBtn" type="button">Clear</button>
+              <button class="btn btnDanger" id="solveBtn" type="button">Solve</button>
+            </div>
+          </div>
+
+          <div class="boardWrap">
+            <div id="board" class="board" role="grid" aria-label="Sudoku 9 by 9 grid"></div>
+          </div>
+
+          <div class="keypad" aria-label="Number keypad">
+            <button class="key" data-key="1" type="button">1</button>
+            <button class="key" data-key="2" type="button">2</button>
+            <button class="key" data-key="3" type="button">3</button>
+            <button class="key" data-key="4" type="button">4</button>
+            <button class="key" data-key="5" type="button">5</button>
+            <button class="key" data-key="6" type="button">6</button>
+            <button class="key" data-key="7" type="button">7</button>
+            <button class="key" data-key="8" type="button">8</button>
+            <button class="key" data-key="9" type="button">9</button>
+            <button class="key keyGhost" data-key="erase" type="button">Erase</button>
+          </div>
+
+          <p class="help">
+            Tip: click a cell then type 1–9 • use arrow keys to move • backspace/0 to erase
+          </p>
+        </section>
+
+        <aside class="sideCard" aria-label="Status">
+          <div class="sideHeader">
+            <h2>How to play</h2>
+            <p class="muted">Fill each row, column, and 3×3 box with digits 1–9.</p>
+          </div>
+
+          <div class="sideSection">
+            <h3>Quality-of-life</h3>
+            <ul class="list">
+              <li><strong>Highlighting</strong> for row/col/box + matching numbers</li>
+              <li><strong>Instant conflict</strong> markers (optional-ish via Check)</li>
+              <li><strong>Autosave</strong> so you can refresh safely</li>
+            </ul>
+          </div>
+
+          <div class="sideSection">
+            <h3>Theme</h3>
+            <div class="toggleRow">
+              <button class="btn" id="themeBtn" type="button">Toggle theme</button>
+              <button class="btn" id="resetSaveBtn" type="button">Reset save</button>
+            </div>
+          </div>
+
+          <div class="toastRegion" aria-live="polite" aria-atomic="true">
+            <div id="toast" class="toast" hidden></div>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>
+
+

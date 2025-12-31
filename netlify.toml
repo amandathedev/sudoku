@@ -1,0 +1,6 @@
+[build]
+  publish = "."
+
+# This is a plain static site (no build command needed).
+
+
