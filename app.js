@@ -332,7 +332,6 @@ function renderBoard({ showConflicts = true, showSolvedOk = false } = {}) {
   const selC = sel ? sel.c : -1;
   const selBoxR = sel ? boxStart(sel.r) : -1;
   const selBoxC = sel ? boxStart(sel.c) : -1;
-  const selVal = sel ? state.user[sel.r][sel.c] : 0;
 
   for (let r = 0; r < SIZE; r++) {
     for (let c = 0; c < SIZE; c++) {
@@ -348,10 +347,8 @@ function renderBoard({ showConflicts = true, showSolvedOk = false } = {}) {
       const inCol = sel && c === selC;
       const inBox = sel && r >= selBoxR && r < selBoxR + BOX && c >= selBoxC && c < selBoxC + BOX;
       const isSelected = sel && r === selR && c === selC;
-      const isMatch = sel && selVal !== 0 && v === selVal && !isSelected;
 
       el.classList.toggle("hi", !!sel && (inRow || inCol || inBox) && !isSelected);
-      el.classList.toggle("match", !!isMatch);
       el.setAttribute("aria-selected", isSelected ? "true" : "false");
 
       // status

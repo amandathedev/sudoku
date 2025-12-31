@@ -15,7 +15,8 @@
   --warn:#ffb020;
   --focus: rgba(124, 92, 255, .22);
   --tile:#ffffff;
-  --tileFixed: rgba(124, 92, 255, .10);
+  /* Fixed clues should read as neutral (not highlighted). */
+  --tileFixed: rgba(20, 20, 30, .04);
   --tileHi: rgba(124, 92, 255, .12);
   --tileMatch: rgba(255, 79, 178, .12);
   --tileErr: rgba(255, 59, 92, .14);
@@ -36,7 +37,7 @@
   --shadow: 0 18px 60px rgba(0, 0, 0, .50);
   --shadow2: 0 10px 24px rgba(0, 0, 0, .40);
   --tile:rgba(18, 18, 26, .74);
-  --tileFixed: rgba(124, 92, 255, .18);
+  --tileFixed: rgba(240, 240, 255, .08);
   --tileHi: rgba(124, 92, 255, .18);
   --tileMatch: rgba(255, 79, 178, .18);
   --tileErr: rgba(255, 59, 92, .22);
@@ -235,12 +236,6 @@ body{
   justify-content:flex-end;
 }
 
-.boardWrap{
-  margin-top: 14px;
-  display:grid;
-  place-items:center;
-}
-
 .board{
   width: min(520px, calc(100vw - 56px));
   aspect-ratio: 1 / 1;
@@ -253,6 +248,7 @@ body{
   background: rgba(255,255,255,.38);
   border: 1px solid var(--line);
   box-shadow: 0 18px 50px rgba(0,0,0,.10);
+  margin: 14px auto 0;
 }
 [data-theme="dark"] .board{ background: rgba(0,0,0,.18); box-shadow: 0 18px 50px rgba(0,0,0,.35); }
 
@@ -443,6 +439,7 @@ body{
 
 /* Extra-compact mobile layout: keep the board above the fold as much as possible */
 @media (max-width: 520px){
+  /* undo last change (keep original-ish spacing) */
   .app{ padding: 14px 12px 22px; }
 
   .top{
@@ -480,11 +477,11 @@ body{
   }
   .statValue{ font-size: 13px; }
 
-  .boardWrap{ margin-top: 10px; }
   .board{
-    width: min(520px, calc(100vw - 40px));
-    padding: 8px;
-    border-radius: 20px;
+    /* Less "nested container" squeeze: just fill the card */
+    width: 100%;
+    max-width: 520px;
+    margin-top: 10px;
   }
 
   .keypad{ margin-top: 10px; gap: 7px; }
