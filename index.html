@@ -86,17 +86,27 @@
 
         <aside class="sideCard" aria-label="Status">
           <div class="sideHeader">
-            <h2>How to play</h2>
-            <p class="muted">Fill each row, column, and 3×3 box with digits 1–9.</p>
+            <h2>Settings</h2>
+            <p class="muted">Make it cozy: assisted mode or classic mode.</p>
           </div>
 
           <div class="sideSection">
-            <h3>Quality-of-life</h3>
-            <ul class="list">
-              <li><strong>Highlighting</strong> for row/col/box + matching numbers</li>
-              <li><strong>Instant conflict</strong> markers (optional-ish via Check)</li>
-              <li><strong>Autosave</strong> so you can refresh safely</li>
-            </ul>
+            <h3>Settings</h3>
+            <div class="settings">
+              <label class="switch">
+                <input id="instantConflictsToggle" type="checkbox" checked />
+                <span class="slider" aria-hidden="true"></span>
+                <span class="switchLabel">Instant conflicts</span>
+              </label>
+              <p class="settingHint muted">When off, conflicts only show after pressing “Check”.</p>
+
+              <label class="switch">
+                <input id="mistakesToggle" type="checkbox" checked />
+                <span class="slider" aria-hidden="true"></span>
+                <span class="switchLabel">Count mistakes (3 max)</span>
+              </label>
+              <p class="settingHint muted">When off, wrong entries won’t be “called out” via the mistake counter.</p>
+            </div>
           </div>
 
           <div class="sideSection">

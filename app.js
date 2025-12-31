@@ -12,6 +12,7 @@ const DIFFICULTY = {
 };
 
 /** @typedef {"easy" | "medium" | "hard"} Difficulty */
+/** @typedef {{ instantConflicts: boolean, countMistakes: boolean }} Settings */
 
 /** @type {{
  * puzzle: number[][],
@@ -42,6 +43,8 @@ const els = {
   toast: /** @type {HTMLElement} */ (document.getElementById("toast")),
   themeBtn: /** @type {HTMLButtonElement} */ (document.getElementById("themeBtn")),
   resetSaveBtn: /** @type {HTMLButtonElement} */ (document.getElementById("resetSaveBtn")),
+  instantConflictsToggle: /** @type {HTMLInputElement} */ (document.getElementById("instantConflictsToggle")),
+  mistakesToggle: /** @type {HTMLInputElement} */ (document.getElementById("mistakesToggle")),
 };
 
 const difficultyInputs = /** @type {NodeListOf<HTMLInputElement>} */ (
@@ -278,6 +281,7 @@ function safeSave() {
       elapsedMs: state.elapsedMs,
       mistakes: state.mistakes,
       completed: state.completed,
+      settings: state.settings,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   } catch {
@@ -368,7 +372,7 @@ function renderBoard({ showConflicts = true, showSolvedOk = false } = {}) {
 
 function selectCell(r, c, { focus } = { focus: false }) {
   state.selected = { r, c };
-  renderBoard({ showConflicts: true, showSolvedOk: false });
+  renderBoard({ showConflicts: state.settings.instantConflicts, showSolvedOk: false });
   if (focus) {
     const el = /** @type {HTMLElement} */ (document.getElementById(cellId(r, c)));
     el.focus();
@@ -387,7 +391,8 @@ function setValueAtSelection(val) {
   state.user[r][c] = val;
 
   // mistakes count: only when you place a wrong number (compared to solution)
-  if (val !== 0 && val !== state.solution[r][c]) {
+  // (this is the main "tells you it's wrong" mechanic; conflicts are separate)
+  if (state.settings.countMistakes && val !== 0 && val !== state.solution[r][c]) {
     state.mistakes += 1;
     if (state.mistakes >= 3) {
       toast("3 mistakes — solved for you.", "warn");
@@ -406,7 +411,7 @@ function setValueAtSelection(val) {
     }
   }
 
-  renderBoard({ showConflicts: true, showSolvedOk: false });
+  renderBoard({ showConflicts: state.settings.instantConflicts, showSolvedOk: false });
   safeSave();
 }
 
@@ -427,7 +432,7 @@ function clearAllUser() {
     }
   }
   toast("Cleared.", "info");
-  renderBoard({ showConflicts: true, showSolvedOk: false });
+  renderBoard({ showConflicts: state.settings.instantConflicts, showSolvedOk: false });
   safeSave();
 }
 
@@ -541,6 +546,7 @@ function newGame(difficulty) {
       user: deepCopyBoard(puzzle),
       fixed: computeFixed(puzzle),
       difficulty,
+      settings: state?.settings ?? { instantConflicts: true, countMistakes: true },
       startedAtMs: Date.now(),
       elapsedMs: 0,
       mistakes: 0,
@@ -549,7 +555,8 @@ function newGame(difficulty) {
     };
 
     buildBoardDom();
-    renderBoard({ showConflicts: true, showSolvedOk: false });
+    syncSettingsUi();
+    renderBoard({ showConflicts: state.settings.instantConflicts, showSolvedOk: false });
     selectFirstEditable();
     startTimer();
     safeSave();
@@ -580,6 +587,7 @@ function loadOrCreate() {
       user: saved.user,
       fixed: saved.fixed || computeFixed(saved.puzzle),
       difficulty: diff,
+      settings: saved.settings || { instantConflicts: true, countMistakes: true },
       startedAtMs: Date.now(),
       elapsedMs: typeof saved.elapsedMs === "number" ? saved.elapsedMs : 0,
       mistakes: typeof saved.mistakes === "number" ? saved.mistakes : 0,
@@ -587,7 +595,8 @@ function loadOrCreate() {
       completed: !!saved.completed,
     };
     buildBoardDom();
-    renderBoard({ showConflicts: true, showSolvedOk: state.completed });
+    syncSettingsUi();
+    renderBoard({ showConflicts: state.settings.instantConflicts, showSolvedOk: state.completed });
     // restore difficulty UI
     for (const input of difficultyInputs) input.checked = input.value === diff;
     selectFirstEditable();
@@ -596,6 +605,12 @@ function loadOrCreate() {
     return;
   }
   newGame(getSelectedDifficulty());
+}
+
+function syncSettingsUi() {
+  if (!els.instantConflictsToggle || !els.mistakesToggle) return;
+  els.instantConflictsToggle.checked = !!state.settings.instantConflicts;
+  els.mistakesToggle.checked = !!state.settings.countMistakes;
 }
 
 function getSelectedDifficulty() {
@@ -712,6 +727,21 @@ function wireEvents() {
     resetSave();
     toast("Save reset.", "info");
   });
+
+  // Settings
+  if (els.instantConflictsToggle) {
+    els.instantConflictsToggle.addEventListener("change", () => {
+      state.settings.instantConflicts = els.instantConflictsToggle.checked;
+      renderBoard({ showConflicts: state.settings.instantConflicts, showSolvedOk: false });
+      safeSave();
+    });
+  }
+  if (els.mistakesToggle) {
+    els.mistakesToggle.addEventListener("change", () => {
+      state.settings.countMistakes = els.mistakesToggle.checked;
+      safeSave();
+    });
+  }
 
   window.addEventListener("beforeunload", () => {
     commitElapsed();
